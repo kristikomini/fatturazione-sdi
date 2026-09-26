@@ -1,0 +1,13 @@
+package it.kristikomini.fatturapa;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/** FatturaPA / SDI e-invoicing service — Spring Boot 3 / Java 21. */
+@SpringBootApplication
+public class FatturaPaApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(FatturaPaApplication.class, args);
+    }
+}
