@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  A representative SUBSET of the FatturaPA 1.2 schema — the mandatory header/body blocks this
+  service emits. No target namespace (keeps the instance documents simple); it matches the JAXB
+  model in FatturaElettronica.java one-to-one, in element order. It is NOT the official Agenzia
+  delle Entrate schema; it is enough to demonstrate real XSD validation with meaningful failures.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+
+    <xs:element name="FatturaElettronica">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="FatturaElettronicaHeader" type="HeaderType"/>
+                <xs:element name="FatturaElettronicaBody" type="BodyType"/>
+            </xs:sequence>
+            <xs:attribute name="versione" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="HeaderType">
+        <xs:sequence>
+            <xs:element name="DatiTrasmissione" type="DatiTrasmissioneType"/>
+            <xs:element name="CedentePrestatore" type="SoggettoType"/>
+            <xs:element name="CessionarioCommittente" type="SoggettoType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DatiTrasmissioneType">
+        <xs:sequence>
+            <xs:element name="IdTrasmittente" type="IdFiscaleType"/>
+            <xs:element name="ProgressivoInvio" type="xs:string"/>
+            <xs:element name="FormatoTrasmissione" type="xs:string"/>
+            <xs:element name="CodiceDestinatario" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IdFiscaleType">
+        <xs:sequence>
+            <!-- ISO country code — pattern makes an invalid country a validation error. -->
+            <xs:element name="IdPaese">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="[A-Z]{2}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="IdCodice" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SoggettoType">
+        <xs:sequence>
+            <xs:element name="DatiAnagrafici" type="DatiAnagraficiType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DatiAnagraficiType">
+        <xs:sequence>
+            <xs:element name="IdFiscaleIVA" type="IdFiscaleType"/>
+            <xs:element name="Denominazione" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BodyType">
+        <xs:sequence>
+            <xs:element name="DatiGenerali" type="DatiGeneraliType"/>
+            <xs:element name="DatiBeniServizi" type="DatiBeniServiziType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DatiGeneraliType">
+        <xs:sequence>
+            <xs:element name="DatiGeneraliDocumento" type="DatiGeneraliDocumentoType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DatiGeneraliDocumentoType">
+        <xs:sequence>
+            <xs:element name="TipoDocumento" type="xs:string"/>
+            <xs:element name="Divisa" type="xs:string"/>
+            <xs:element name="Data" type="xs:date"/>
+            <xs:element name="Numero" type="xs:string"/>
+            <xs:element name="ImportoTotaleDocumento" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DatiBeniServiziType">
+        <xs:sequence>
+            <xs:element name="DettaglioLinee" type="DettaglioLineeType" maxOccurs="unbounded"/>
+            <xs:element name="DatiRiepilogo" type="DatiRiepilogoType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DettaglioLineeType">
+        <xs:sequence>
+            <xs:element name="NumeroLinea" type="xs:int"/>
+            <xs:element name="Descrizione" type="xs:string"/>
+            <xs:element name="Quantita" type="xs:decimal"/>
+            <xs:element name="PrezzoUnitario" type="xs:decimal"/>
+            <xs:element name="PrezzoTotale" type="xs:decimal"/>
+            <xs:element name="AliquotaIVA" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DatiRiepilogoType">
+        <xs:sequence>
+            <xs:element name="AliquotaIVA" type="xs:decimal"/>
+            <xs:element name="ImponibileImporto" type="xs:decimal"/>
+            <xs:element name="Imposta" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
