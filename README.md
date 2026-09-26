@@ -34,14 +34,19 @@ requests that both grab "next number" must not get the same one, and a rolled-ba
 must not burn a number. The design and its trade-offs (DB sequence vs `SELECT … FOR UPDATE`
 counter vs advisory lock) are in [`docs/NUMBERING.md`](docs/NUMBERING.md).
 
-## What this demonstrates (CV bullets — fill numbers after building)
+## What this demonstrates (CV bullets)
 
-- Built a FatturaPA e-invoicing service: XML generation + XSD validation + the full SDI state
-  machine (consegna / scarto / mancata consegna) with `<N>` handled rejection codes.
-- Implemented gap-less, per-year sequential invoice numbering proven correct under
-  `<N>` concurrent requests via a `<chosen mechanism>`; `<N>` parallel-stress test asserts no
-  duplicates and no gaps.
-- Guaranteed at-least-once delivery to SDI with a transactional outbox and idempotent relay.
+*Proven by tests in this repo (Testcontainers tests run in CI):*
+- Built a FatturaPA e-invoicing service: JAXB XML generation + XSD validation (reports all errors)
+  + the SDI state machine (consegna / scarto / mancata consegna) with a catalog of 5 real scarto
+  codes; illegal lifecycle transitions are rejected.
+- Implemented gap-less, per-year sequential invoice numbering with `SELECT … FOR UPDATE` +
+  `INSERT … ON CONFLICT DO NOTHING`, proven under **50 concurrent requests** (numbers 1..50, no
+  gaps, no duplicates) and proven not to burn a number on rollback.
+- Guaranteed at-least-once SDI dispatch with a **transactional outbox** (invoice + event committed
+  together) and an idempotent polling relay that advances the invoice VALIDATA → INVIATA;
+  end-to-end verified against real Postgres.
+- REST API (issue / read / apply SDI notification) with bean validation and RFC 7807 errors.
 
 ## Run it
 

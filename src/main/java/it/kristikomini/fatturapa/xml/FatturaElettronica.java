@@ -205,6 +205,10 @@ public class FatturaElettronica {
         public void setImportoTotaleDocumento(BigDecimal v) {
             this.importoTotaleDocumento = v;
         }
+
+        public BigDecimal getImportoTotaleDocumento() {
+            return importoTotaleDocumento;
+        }
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
